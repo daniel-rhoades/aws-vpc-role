@@ -1,0 +1,30 @@
+---
+- name: My System | Provision all required infrastructure
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    my_vpc_subnets:
+      - cidr: "172.40.10.0/24"
+        az: "eu-west-1a"
+
+      - cidr: "172.40.20.0/24"
+        az: "eu-west-1b"
+
+    my_public_subnet_routes:
+      - subnets:
+          - "172.40.10.0/24"
+          - "172.40.20.0/24"
+        routes:
+          - dest: 0.0.0.0/0
+            gw: igw
+  roles:
+    # Provision networking
+    - {
+        role: aws-vpc-role,
+        vpc_name: "my-vpc",
+        vpc_region: "eu-west-1",
+        vpc_cidr_block: "172.40.0.0/16",
+        vpc_subnets: "{{ my_vpc_subnets }}",
+        public_subnet_routes: "{{ my_public_subnet_routes }}"
+      }
