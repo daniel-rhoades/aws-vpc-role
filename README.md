@@ -31,6 +31,10 @@ Required variables:
 * vpc_subnets: You must specify the subnets you wish to create, see example playbook section below for further information;
 * public_subnet_routes: You must specify the public subnets routes you wish to create, see example playbook section below for further information.
 
+Outputs:
+
+* vpc: The AWS VPC object created as a result of running the `ec2_vpc_module` with the supplied variables.
+
 Dependencies
 ------------
 
@@ -49,27 +53,34 @@ The example playbook below ensures a VPC is provisioned in AWS as specified, e.g
   connection: local
   gather_facts: no
   vars:
+    my_vpc_name: "my_example_vpc"
+    my_vpc_region: "eu-west-1"
+    my_vpc_cidr: "172.40.0.0/16"
+    everywhere_cidr: "0.0.0.0/0"
+
+    # Subnets within the VPC
     my_vpc_subnets:
       - cidr: "172.40.10.0/24"
-        az: "eu-west-1a"
+        az: "{{ my_vpc_region }}a"
 
       - cidr: "172.40.20.0/24"
-        az: "eu-west-1b"
+        az: "{{ my_vpc_region }}b"
 
+    # Allow the subnets to route to the outside world
     my_public_subnet_routes:
       - subnets:
-          - "172.40.10.0/24"
-          - "172.40.20.0/24"
+          - "{{ my_vpc_subnets[0].cidr }}"
+          - "{{ my_vpc_subnets[1].cidr }}"
         routes:
-          - dest: 0.0.0.0/0
+          - dest: "{{ everywhere_cidr }}"
             gw: igw
   roles:
     # Provision networking
     - {
-        role: aws-vpc-role,
-        vpc_name: "my-vpc",
-        vpc_region: "eu-west-1",
-        vpc_cidr_block: "172.40.0.0/16",
+        role: daniel-rhoades.aws-vpc-role,
+        vpc_name: "{{ my_vpc_name }}",
+        vpc_region: "{{ my_vpc_region }}",
+        vpc_cidr_block: "{{ my_vpc_cidr }}",
         vpc_subnets: "{{ my_vpc_subnets }}",
         public_subnet_routes: "{{ my_public_subnet_routes }}"
       }
@@ -83,28 +94,35 @@ To decommission a VPC:
   connection: local
   gather_facts: no
   vars:
+    my_vpc_name: "my_example_vpc"
+    my_vpc_region: "eu-west-1"
+    my_vpc_cidr: "172.40.0.0/16"
+    everywhere_cidr: "0.0.0.0/0"
+
+    # Subnets within the VPC
     my_vpc_subnets:
       - cidr: "172.40.10.0/24"
-        az: "eu-west-1a"
+        az: "{{ my_vpc_region }}a"
 
       - cidr: "172.40.20.0/24"
-        az: "eu-west-1b"
+        az: "{{ my_vpc_region }}b"
 
+    # Allow the subnets to route to the outside world
     my_public_subnet_routes:
       - subnets:
-          - "172.40.10.0/24"
-          - "172.40.20.0/24"
+          - "{{ my_vpc_subnets[0].cidr }}"
+          - "{{ my_vpc_subnets[1].cidr }}"
         routes:
-          - dest: 0.0.0.0/0
+          - dest: "{{ everywhere_cidr }}"
             gw: igw
   roles:
     # Decommission networking
     - {
-        role: aws-vpc-role,
-        state: "absent",
-        vpc_name: "my-vpc",
-        vpc_region: "eu-west-1",
-        vpc_cidr_block: "172.40.0.0/16",
+        role: daniel-rhoades.aws-vpc-role,
+        vpc_state: "absent",
+        vpc_name: "{{ my_vpc_name }}",
+        vpc_region: "{{ my_vpc_region }}",
+        vpc_cidr_block: "{{ my_vpc_cidr }}",
         vpc_subnets: "{{ my_vpc_subnets }}",
         public_subnet_routes: "{{ my_public_subnet_routes }}"
       }
