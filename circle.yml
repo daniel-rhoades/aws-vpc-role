@@ -1,10 +1,7 @@
 dependencies:
   pre:
     - sudo apt-get update -q
-    - sudo apt-get install -y -q software-properties-common
-    - sudo apt-add-repository -y ppa:ansible/ansible
-    - sudo apt-get install -y -q ansible
-    - sudo apt-get install -y -q python-pip
+    - sudo pip install ansible
     - sudo pip install boto
 
     # Create ansible.cfg with correct roles_path

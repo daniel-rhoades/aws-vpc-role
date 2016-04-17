@@ -1,5 +1,7 @@
-Role Name
-=========
+[![Circle CI](https://circleci.com/gh/daniel-rhoades/aws-vpc-role.svg?style=svg&circle-token=8197ca6e8362d9b5f1b78f43174d8ba7857c9b7a)](https://circleci.com/gh/daniel-rhoades/aws-vpc-role)
+
+aws-vpc
+=======
 
 Ansible role for simplifying the provisioning and decommissioning of a VPC within an AWS account.
 
