@@ -39,6 +39,8 @@ No dependencies on other roles.
 Example Playbook
 ----------------
 
+Before using this role you will need to install the role, the simplist way to do this is: `ansible-galaxy install daniel-rhoades.aws-vpc-role`. 
+
 The example playbook below ensures a VPC is provisioned in AWS as specified, e.g. if one already matches the role does nothing, otherwise it gets created.
 
 ```
@@ -64,7 +66,7 @@ The example playbook below ensures a VPC is provisioned in AWS as specified, e.g
   roles:
     # Provision networking
     - {
-        role: aws-vpc,
+        role: aws-vpc-role,
         vpc_name: "my-vpc",
         vpc_region: "eu-west-1",
         vpc_cidr_block: "172.40.0.0/16",
@@ -98,7 +100,7 @@ To decommission a VPC:
   roles:
     # Decommission networking
     - {
-        role: aws-vpc,
+        role: aws-vpc-role,
         state: "absent",
         vpc_name: "my-vpc",
         vpc_region: "eu-west-1",
